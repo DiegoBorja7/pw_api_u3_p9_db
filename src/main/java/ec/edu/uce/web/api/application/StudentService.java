@@ -4,19 +4,18 @@ import java.util.List;
 
 import ec.edu.uce.web.api.domain.Student;
 import ec.edu.uce.web.api.infraestructure.StudentRepository;
+import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class StudentService {
-    // Inyeccion de dependencias
     @Inject
     StudentRepository studentRepository;
 
-    // Metodos de negocio
+    @WithTransaction
     public Uni<List<Student>> findAll() {
-        return this.studentRepository.listAll().map(items -> (List<Student>) items);
+        return studentRepository.listAll();
     }
-
 }
