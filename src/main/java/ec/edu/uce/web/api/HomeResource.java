@@ -5,12 +5,12 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
-@Path("/hello")
-public class GreetingResource {
+@Path("/")
+public class HomeResource {
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    public String hello() {
-        return "Hello RESTEasy Funciono xD";
+    public String home() {
+        return "Bienvenido a la API de Quarkus - pw_api_u3_p9_db";
     }
 }
