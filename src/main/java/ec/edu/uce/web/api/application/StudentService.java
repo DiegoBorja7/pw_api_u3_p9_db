@@ -73,4 +73,12 @@ public class StudentService {
     public Uni<Boolean> delete(Long id) {
         return studentRepository.deleteById(id);
     }
+
+    public Uni<List<Student>> findByProvince(String province) {
+        return studentRepository.find("province", province).list();
+    }
+
+    public Uni<List<Student>> findByProvinceAndGender(String province, String gender) {
+        return studentRepository.find("province = ?1 and gender = ?2", province, gender).list();
+    }
 }

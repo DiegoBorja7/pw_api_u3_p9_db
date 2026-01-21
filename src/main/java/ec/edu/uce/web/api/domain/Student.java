@@ -28,4 +28,6 @@ public class Student extends PanacheEntityBase {
 
     @Column(name = "birthday")
     public LocalDateTime birthDay;
+    public String province;
+    public String gender;
 }

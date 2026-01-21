@@ -14,6 +14,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 
 @Path("/estudiantes")
@@ -32,6 +33,19 @@ public class StudentResource {
     @Path("/buscarporid/{id}")
     public Uni<Student> getStudentById(@PathParam("id") Long id) {
         return studentService.findById(id);
+    }
+
+    @GET
+    @Path("/buscarporprovincia")
+    public Uni<List<Student>> getStudentsByProvince(@QueryParam("province") String province) {
+        return studentService.findByProvince(province);
+    }
+
+    @GET
+    @Path("/buscarporprovinciaygenero")
+    public Uni<List<Student>> getStudentsByProvinceAndGender(@QueryParam("province") String province,
+            @QueryParam("gender") String gender) {
+        return studentService.findByProvinceAndGender(province, gender);
     }
 
     @POST
@@ -57,4 +71,5 @@ public class StudentResource {
     public Uni<Boolean> deleteStudent(@PathParam("id") Long id) {
         return studentService.delete(id);
     }
+
 }
