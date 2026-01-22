@@ -24,20 +24,18 @@ public class SubjectResource {
     private SubjectService subjectService;
 
     @GET
-    @Path("/todos")
     public Uni<List<Subject>> getAllSubjects() {
         return subjectService.findAll();
     }
 
     @GET
-    @Path("/buscarporid/{id}")
+    @Path("/{id}")
     public Uni<Subject> getSubjectById(@PathParam("id") Long id) {
         validateId(id);
         return subjectService.findById(id);
     }
 
     @POST
-    @Path("/guardar")
     public Uni<Subject> createSubject(Subject subject) {
         validateBody(subject);
         return subjectService.save(subject);
@@ -53,7 +51,7 @@ public class SubjectResource {
     }
 
     @PUT
-    @Path("/actualizar/{id}")
+    @Path("/{id}")
     public Uni<Subject> updateSubject(@PathParam("id") Long id, Subject subject) {
         validateId(id);
         validateBody(subject);
@@ -61,7 +59,7 @@ public class SubjectResource {
     }
 
     @PATCH
-    @Path("/actualizarparcial/{id}")
+    @Path("/{id}")
     public Uni<Void> partialUpdateSubject(@PathParam("id") Long id, Subject subject) {
         validateId(id);
         validateBody(subject);
@@ -69,7 +67,7 @@ public class SubjectResource {
     }
 
     @GET
-    @Path("/buscarporsemestre/{semester}")
+    @Path("/{semester}")
     public Uni<List<Subject>> getSubjectsBySemester(@PathParam("semester") Integer semester) {
         // Service valida rango completo (1-10)
         return subjectService.findBySemester(semester);

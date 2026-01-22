@@ -24,50 +24,48 @@ public class StudentResource {
     private StudentService studentService;
 
     @GET
-    @Path("/todos")
     public Uni<List<Student>> getAllStudents() {
         return studentService.findAll();
     }
 
     @GET
-    @Path("/buscarporid/{id}")
+    @Path("/{id}")
     public Uni<Student> getStudentById(@PathParam("id") Long id) {
         return studentService.findById(id);
     }
 
     @GET
-    @Path("/buscarporprovincia")
+    @Path("/provincia")
     public Uni<List<Student>> getStudentsByProvince(@QueryParam("province") String province) {
         return studentService.findByProvince(province);
     }
 
     @GET
-    @Path("/buscarporprovinciaygenero")
+    @Path("/provincia/genero")
     public Uni<List<Student>> getStudentsByProvinceAndGender(@QueryParam("province") String province,
             @QueryParam("gender") String gender) {
         return studentService.findByProvinceAndGender(province, gender);
     }
 
     @POST
-    @Path("/guardar")
     public Uni<Student> createStudent(Student student) {
         return studentService.save(student);
     }
 
     @PUT
-    @Path("/actualizar/{id}")
+    @Path("/{id}")
     public Uni<Student> updateStudent(@PathParam("id") Long id, Student student) {
         return studentService.update(id, student);
     }
 
     @PATCH
-    @Path("/actualizarparcial/{id}")
+    @Path("/{id}")
     public Uni<Void> partialUpdateStudent(@PathParam("id") Long id, Student student) {
         return studentService.partialUpdate(id, student);
     }
 
     @DELETE
-    @Path("/eliminar/{id}")
+    @Path("/{id}")
     public Uni<Boolean> deleteStudent(@PathParam("id") Long id) {
         return studentService.delete(id);
     }
