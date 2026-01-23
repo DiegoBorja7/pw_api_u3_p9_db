@@ -15,6 +15,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 
 @Path("/materias")
@@ -67,21 +68,21 @@ public class SubjectResource {
     }
 
     @GET
-    @Path("/{semester}")
-    public Uni<List<Subject>> getSubjectsBySemester(@PathParam("semester") Integer semester) {
+    @Path("/semestre")
+    public Uni<List<Subject>> getSubjectsBySemester(@QueryParam("semester") Integer semester) {
         // Service valida rango completo (1-10)
         return subjectService.findBySemester(semester);
     }
 
     @GET
-    @Path("/buscarporaula/{classroom}")
-    public Uni<List<Subject>> getSubjectsByClassroom(@PathParam("classroom") String classroom) {
+    @Path("/aula")
+    public Uni<List<Subject>> getSubjectsByClassroom(@QueryParam("classroom") String classroom) {
         // Service valida que no esté vacío
         return subjectService.findByClassroom(classroom);
     }
 
     @DELETE
-    @Path("/eliminar/{id}")
+    @Path("/{id}")
     public Uni<Void> deleteSubject(@PathParam("id") Long id) {
         validateId(id);
         return subjectService.delete(id);
