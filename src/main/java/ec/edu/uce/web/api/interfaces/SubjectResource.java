@@ -17,6 +17,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 @Path("/materias")
 @Produces(MediaType.APPLICATION_JSON)
@@ -42,6 +43,15 @@ public class SubjectResource {
         return subjectService.save(subject);
     }
 
+    // DEBER MENSAJE 201 CREATED
+    @POST
+    @Path("/crear")
+    public Uni<Response> createSubject1(Subject subject) {
+        validateBody(subject);
+        return subjectService.save(subject)
+                .map(savedSubject -> Response.status(Response.Status.CREATED).entity(savedSubject).build());
+    }
+
     @POST
     @Path("/guardarmultiplesmaterias")
     public Uni<List<Subject>> createMultipleSubjects(List<Subject> subjects) {
@@ -65,6 +75,16 @@ public class SubjectResource {
         validateId(id);
         validateBody(subject);
         return subjectService.partialUpdate(id, subject);
+    }
+
+    // DEBER
+    @PATCH
+    @Path("/actualizar/{id}")
+    public Uni<Response> partialUpdateSubject1(@PathParam("id") Long id, Subject subject) {
+        validateId(id);
+        validateBody(subject);
+        return subjectService.partialUpdate(id, subject)
+                .map(updatedSubject -> Response.status(209).entity(updatedSubject).build());
     }
 
     @GET

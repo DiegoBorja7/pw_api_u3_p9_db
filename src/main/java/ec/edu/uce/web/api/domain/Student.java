@@ -10,20 +10,22 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @Table(name = "students")
 @SequenceGenerator(name = "students_seq", sequenceName = "estudiante_secuencia", allocationSize = 1)
+@XmlRootElement(name = "student")
 public class Student extends PanacheEntityBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "students_seq")
+
     public Long id;
     public String name;
 
     @Column(name = "lastname")
     public String lastName;
-
     public String email;
 
     @Column(name = "birthday")

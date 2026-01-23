@@ -6,7 +6,6 @@ import ec.edu.uce.web.api.application.StudentService;
 import ec.edu.uce.web.api.domain.Student;
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PATCH;
@@ -18,12 +17,9 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
 @Path("/estudiantes")
 @Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 public class StudentResource {
     @Inject
     private StudentService studentService;
@@ -35,8 +31,14 @@ public class StudentResource {
 
     @GET
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_XML)
     public Uni<Student> getStudentById(@PathParam("id") Long id) {
+        return studentService.findById(id);
+    }
+
+    @GET
+    @Path("/id/{id}")
+    @Produces(MediaType.APPLICATION_XML)
+    public Uni<Student> getStudentById1(@PathParam("id") Long id) {
         return studentService.findById(id);
     }
 
@@ -48,7 +50,6 @@ public class StudentResource {
 
     @GET
     @Path("/provincia/genero")
-    @Produces(MediaType.APPLICATION_JSON)
     public Uni<List<Student>> getStudentsByProvinceAndGender(@QueryParam("province") String province,
             @QueryParam("gender") String gender) {
         return studentService.findByProvinceAndGender(province, gender);
@@ -63,9 +64,9 @@ public class StudentResource {
     // Response con el código de estado 201 Created
     @POST
     @Path("/crear")
-    public Response createStudent1(Student student) {
-        this.studentService.save(student);
-        return Response.status(Response.Status.CREATED).entity(student).build();
+    public Uni<Response> createStudent1(Student student) {
+        return studentService.save(student)
+                .map(savedStudent -> Response.status(Response.Status.CREATED).entity(savedStudent).build());
     }
 
     @PUT
@@ -76,9 +77,9 @@ public class StudentResource {
 
     @PUT
     @Path("actualizar/{id}")
-    public Response updateStudent1(@PathParam("id") Long id, Student student) {
-        this.studentService.update(id, student);
-        return Response.status(209).entity(student).build();
+    public Uni<Response> updateStudent1(@PathParam("id") Long id, Student student) {
+        return studentService.update(id, student)
+                .map(updatedStudent -> Response.status(209).entity(updatedStudent).build());
     }
 
     @PATCH
