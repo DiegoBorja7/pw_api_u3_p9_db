@@ -2,10 +2,13 @@ package ec.edu.uce.web.api.interfaces;
 
 import java.util.List;
 
+import ec.edu.uce.web.api.application.SonService;
 import ec.edu.uce.web.api.application.StudentService;
-import ec.edu.uce.web.api.domain.Student;
+import ec.edu.uce.web.api.application.representation.StudentRepresentation;
+import ec.edu.uce.web.api.domain.Son;
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PATCH;
@@ -24,39 +27,46 @@ public class StudentResource {
     @Inject
     private StudentService studentService;
 
+    @Inject
+    private SonService sonService;
+
     @GET
-    public Uni<List<Student>> getAllStudents() {
+    @Produces(MediaType.APPLICATION_JSON)
+    public Uni<List<StudentRepresentation>> getAllStudents() {
         return studentService.findAll();
     }
 
     @GET
     @Path("/{id}")
-    public Uni<Student> getStudentById(@PathParam("id") Long id) {
+    @Produces(MediaType.APPLICATION_JSON)
+    public Uni<StudentRepresentation> getStudentById(@PathParam("id") Long id) {
         return studentService.findById(id);
     }
 
     @GET
     @Path("/id/{id}")
     @Produces(MediaType.APPLICATION_XML)
-    public Uni<Student> getStudentById1(@PathParam("id") Long id) {
+    public Uni<StudentRepresentation> getStudentById1(@PathParam("id") Long id) {
         return studentService.findById(id);
     }
 
     @GET
     @Path("/provincia")
-    public Uni<List<Student>> getStudentsByProvince(@QueryParam("province") String province) {
+    public Uni<List<StudentRepresentation>> getStudentsByProvince(@QueryParam("province") String province) {
         return studentService.findByProvince(province);
     }
 
     @GET
     @Path("/provincia/genero")
-    public Uni<List<Student>> getStudentsByProvinceAndGender(@QueryParam("province") String province,
+    public Uni<List<StudentRepresentation>> getStudentsByProvinceAndGender(@QueryParam("province") String province,
             @QueryParam("gender") String gender) {
         return studentService.findByProvinceAndGender(province, gender);
     }
 
     @POST
-    public Uni<Student> createStudent(Student student) {
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Uni<StudentRepresentation> createStudent(StudentRepresentation student) {
         return studentService.save(student);
     }
 
@@ -64,27 +74,35 @@ public class StudentResource {
     // Response con el código de estado 201 Created
     @POST
     @Path("/crear")
-    public Uni<Response> createStudent1(Student student) {
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Uni<Response> createStudent1(StudentRepresentation student) {
         return studentService.save(student)
                 .map(savedStudent -> Response.status(Response.Status.CREATED).entity(savedStudent).build());
     }
 
     @PUT
     @Path("/{id}")
-    public Uni<Student> updateStudent(@PathParam("id") Long id, Student student) {
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Uni<StudentRepresentation> updateStudent(@PathParam("id") Long id, StudentRepresentation student) {
         return studentService.update(id, student);
     }
 
     @PUT
     @Path("actualizar/{id}")
-    public Uni<Response> updateStudent1(@PathParam("id") Long id, Student student) {
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Uni<Response> updateStudent1(@PathParam("id") Long id, StudentRepresentation student) {
         return studentService.update(id, student)
                 .map(updatedStudent -> Response.status(209).entity(updatedStudent).build());
     }
 
     @PATCH
     @Path("/{id}")
-    public Uni<Void> partialUpdateStudent(@PathParam("id") Long id, Student student) {
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Uni<Void> partialUpdateStudent(@PathParam("id") Long id, StudentRepresentation student) {
         return studentService.partialUpdate(id, student);
     }
 
@@ -94,4 +112,9 @@ public class StudentResource {
         return studentService.delete(id);
     }
 
+    @GET
+    @Path("/{studentId}/hijos")
+    public Uni<List<Son>> find(@PathParam("studentId") Long studentId) {
+        return sonService.findByStudentId(studentId);
+    }
 }
