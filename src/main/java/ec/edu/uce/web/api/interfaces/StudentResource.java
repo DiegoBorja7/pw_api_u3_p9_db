@@ -4,8 +4,9 @@ import java.util.List;
 
 import ec.edu.uce.web.api.application.SonService;
 import ec.edu.uce.web.api.application.StudentService;
+import ec.edu.uce.web.api.application.representation.LinkDTO;
+import ec.edu.uce.web.api.application.representation.SonRepresentation;
 import ec.edu.uce.web.api.application.representation.StudentRepresentation;
-import ec.edu.uce.web.api.domain.Son;
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
@@ -18,8 +19,10 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 
 @Path("/estudiantes")
 @Produces(MediaType.APPLICATION_JSON)
@@ -30,17 +33,26 @@ public class StudentResource {
     @Inject
     private SonService sonService;
 
+    @Context
+    private UriInfo uriInfo;
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Uni<List<StudentRepresentation>> getAllStudents() {
-        return studentService.findAll();
+        return studentService.findAll()
+                .chain(students -> {
+                    List<Uni<StudentRepresentation>> unis = students.stream()
+                            .map(student -> buildLinks(Uni.createFrom().item(student)))
+                            .toList();
+                    return Uni.join().all(unis).andCollectFailures();
+                });
     }
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Uni<StudentRepresentation> getStudentById(@PathParam("id") Long id) {
-        return studentService.findById(id);
+        return this.buildLinks(studentService.findById(id));
     }
 
     @GET
@@ -114,7 +126,29 @@ public class StudentResource {
 
     @GET
     @Path("/{studentId}/hijos")
-    public Uni<List<Son>> find(@PathParam("studentId") Long studentId) {
+    public Uni<List<SonRepresentation>> getSonsByStudentId(@PathParam("studentId") Long studentId) {
         return sonService.findByStudentId(studentId);
+    }
+
+    private Uni<StudentRepresentation> buildLinks(Uni<StudentRepresentation> studentUni) {
+        return studentUni.map(student -> {
+            String selfUri = this.uriInfo.getBaseUriBuilder()
+                    .path(StudentResource.class)
+                    .path(Long.toString(student.id))
+                    .build()
+                    .toString();
+
+            String sonsUri = this.uriInfo.getBaseUriBuilder()
+                    .path(StudentResource.class)
+                    .path(Long.toString(student.id))
+                    .path("hijos")
+                    .build()
+                    .toString();
+
+            student.links = List.of(
+                    new LinkDTO("self", selfUri),
+                    new LinkDTO("sons", sonsUri));
+            return student;
+        });
     }
 }

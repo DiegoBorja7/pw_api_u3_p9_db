@@ -5,6 +5,7 @@ import java.util.List;
 import ec.edu.uce.web.api.application.representation.StudentRepresentation;
 import ec.edu.uce.web.api.domain.Student;
 import ec.edu.uce.web.api.infraestructure.StudentRepository;
+import io.quarkus.hibernate.reactive.panache.common.WithSession;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -23,6 +24,7 @@ public class StudentService {
                         .toList());
     }
 
+    @WithSession
     public Uni<StudentRepresentation> findById(Long id) {
         return studentRepository.findById(id)
                 .map(this::mapperToStudent);
