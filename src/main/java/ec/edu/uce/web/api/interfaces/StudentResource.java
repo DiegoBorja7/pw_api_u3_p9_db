@@ -8,6 +8,8 @@ import ec.edu.uce.web.api.application.representation.LinkDTO;
 import ec.edu.uce.web.api.application.representation.SonRepresentation;
 import ec.edu.uce.web.api.application.representation.StudentRepresentation;
 import io.smallrye.mutiny.Uni;
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -26,6 +28,7 @@ import jakarta.ws.rs.core.UriInfo;
 
 @Path("/estudiantes")
 @Produces(MediaType.APPLICATION_JSON)
+@RolesAllowed("admin")
 public class StudentResource {
     @Inject
     private StudentService studentService;
@@ -51,6 +54,7 @@ public class StudentResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    // @PermitAll // Descomentar para permitir acceso público
     public Uni<StudentRepresentation> getStudentById(@PathParam("id") Long id) {
         return this.buildLinks(studentService.findById(id));
     }

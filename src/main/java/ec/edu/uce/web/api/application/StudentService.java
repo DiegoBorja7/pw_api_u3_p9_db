@@ -18,7 +18,7 @@ public class StudentService {
 
     @WithTransaction
     public Uni<List<StudentRepresentation>> findAll() {
-        return studentRepository.listAll()
+        return studentRepository.find("ORDER BY id ASC").list()
                 .map(students -> students.stream()
                         .map(this::mapperToStudent)
                         .toList());
@@ -49,6 +49,8 @@ public class StudentService {
                     existing.lastName = studentData.lastName;
                     existing.email = studentData.email;
                     existing.birthDay = studentData.birthDay;
+                    existing.province = studentData.province;
+                    existing.gender = studentData.gender;
                     return existing;
                 })
                 .chain(studentRepository::persistAndFlush)
@@ -74,6 +76,12 @@ public class StudentService {
                     }
                     if (studentData.birthDay != null) {
                         existing.birthDay = studentData.birthDay;
+                    }
+                    if (studentData.province != null) {
+                        existing.province = studentData.province;
+                    }
+                    if (studentData.gender != null) {
+                        existing.gender = studentData.gender;
                     }
                     return existing;
                 })
